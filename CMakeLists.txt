@@ -1,4 +1,38 @@
 cmake_minimum_required(VERSION 3.10.0)
+
+
+#####################
+# SHADER COMPILATION
+#####################
+
+find_program(SLANGC slangc REQUIRED)
+
+set(SHADER_SOURCES_DIR ${CMAKE_SOURCE_DIR}/shaders)
+set(SHADER_SOURCES
+	${SHADER_SOURCES_DIR}/shader.slang
+)
+
+set(SHADER_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/shaders/)
+set(SHADER_SPV_FILES)
+
+foreach(SHADER ${SHADER_SOURCES})
+	get_filename_component(FILE_NAME ${SHADER} NAME)
+	set(SPV ${SHADER_OUTPUT_DIR}/${FILE_NAME}.spv)
+
+	list(APPEND SHADER_SPV_FILES ${SPV})
+
+	add_custom_command(
+		OUTPUT ${SPV}
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADER_OUTPUT_DIR}
+		COMMAND slangc ${SHADER} -lang slang -target spirv -profile glsl_450 -emit-spirv-directly -fvk-use-gl-layout -o ${SPV}
+		DEPENDS ${SHADER}
+		VERBATIM
+	)
+endforeach()
+
+add_custom_target(shaders DEPENDS ${SHADER_SPV_FILES})
+
+
 project(
   Renderer
   VERSION 0.1.0
@@ -17,6 +51,7 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
 endif()
 
 add_subdirectory(external/Vulkan-Headers)
+add_subdirectory(external/glm)
 
 
 # to reduce compile by not bulding unescessary stuff
@@ -30,8 +65,13 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
+
+add_dependencies(${PROJECT_NAME} shaders)
+
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE Vulkan::Headers glfw )
-# target_compile_definitions(
-#   ${PROJECT_NAME} PRIVATE VULKAN_HPP_ENABLE_DYNAMIC_LOADER_TOOL=0
-#                           SDL_MAIN_USE_CALLBACKS VK_NO_PROTOTYPES)
+  ${PROJECT_NAME} PRIVATE Vulkan::Headers glfw glm::glm )
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+	SHADERS_DIR="${SHADER_OUTPUT_DIR}"
+)
+
