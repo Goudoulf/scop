@@ -53,6 +53,9 @@ endif()
 add_subdirectory(external/Vulkan-Headers)
 add_subdirectory(external/glm)
 
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE ${CMAKE_SOURCE_DIR}/external/stb)
+
 
 # to reduce compile by not bulding unescessary stuff
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -69,7 +72,7 @@ target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 add_dependencies(${PROJECT_NAME} shaders)
 
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE Vulkan::Headers glfw glm::glm )
+  ${PROJECT_NAME} PRIVATE Vulkan::Headers glfw glm::glm stb)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
 	SHADERS_DIR="${SHADER_OUTPUT_DIR}"
