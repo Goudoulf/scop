@@ -23,6 +23,7 @@ public:
   vk::raii::SurfaceKHR createSurface(const vk::raii::Instance &instance);
   [[nodiscard]] vk::Extent2D getExtent() const;
   static void framebufferResizeCallback(GLFWwindow *, int, int);
+  [[nodiscard]] GLFWwindow *getGLFWWindow() const { return window; }
 
 private:
   GLFWwindow *window = nullptr;

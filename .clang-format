@@ -1,0 +1,17 @@
+---
+# Use a base style (like Google, LLVM, or Chromium)
+BasedOnStyle: Google 
+
+# This stops the 80-character wrap. 
+# 0 means no limit, or set it to 120 for a modern widescreen feel.
+ColumnLimit: 0
+
+# Vulkan-specific readability tweaks
+IndentWidth: 4
+AlignAfterOpenBracket: Align
+AlwaysBreakAfterReturnType: None
+# Helps with long Vulkan struct initializers
+Cpp11BracedListStyle: true 
+# Keeps simple functions on one line to reduce vertical bloat
+AllowShortFunctionsOnASingleLine: Inline
+---

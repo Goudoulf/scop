@@ -70,9 +70,11 @@ add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${SOURCES})
 
 add_dependencies(${PROJECT_NAME} shaders)
+add_library(tinyobjloader INTERFACE)
+target_include_directories(tinyobjloader INTERFACE ${CMAKE_SOURCE_DIR}/external/tinyobjloader)
 
 target_link_libraries(
-  ${PROJECT_NAME} PRIVATE Vulkan::Headers glfw glm::glm stb)
+  ${PROJECT_NAME} PRIVATE Vulkan::Headers glfw glm::glm stb tinyobjloader)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
 	SHADERS_DIR="${SHADER_OUTPUT_DIR}"
